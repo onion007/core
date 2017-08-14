@@ -70,7 +70,7 @@ class CorsController extends Controller {
 	 */
 	public function getDomains() {
 		$userId = $this->userId;
-		$domains = explode(",", $this->config->getUserValue($userId, 'cors', 'domains'));
+		$domains = explode(",", $this->config->getUserValue($userId, 'core', 'domains'));
 
 		return new JSONResponse($domains);
 	}
@@ -97,7 +97,7 @@ class CorsController extends Controller {
 		}
 
 		$userId = $this->userId;
-		$domains = explode(",", $this->config->getUserValue($userId, 'cors', 'domains'));
+		$domains = explode(",", $this->config->getUserValue($userId, 'core', 'domains'));
 		$domains = array_filter($domains);
 		array_push($domains, $domain);
 		// In case same domain is added
@@ -105,8 +105,8 @@ class CorsController extends Controller {
 		// Store as comma seperated string
 		$domainsString = implode(",", $domains);
 
-		$this->config->setUserValue($userId, 'cors', 'domains', $domainsString);
-		$this->logger->debug('The domain "' . $domain . '" has been white-listed.', ['app' => 'cors']);
+		$this->config->setUserValue($userId, 'core', 'domains', $domainsString);
+		$this->logger->debug('The domain "' . $domain . '" has been white-listed.', ['app' => 'core']);
 
 		return new RedirectResponse(
 			$this->urlGenerator->linkToRouteAbsolute(
@@ -125,10 +125,10 @@ class CorsController extends Controller {
 	 */
 	public function removeDomain($id) {
 		$userId = $this->userId;
-		$domains = explode(",", $this->config->getUserValue($userId, 'cors', 'domains'));
+		$domains = explode(",", $this->config->getUserValue($userId, 'core', 'domains'));
 		unset($domains[$id]);
 
-		$this->config->setUserValue($userId, 'cors', 'domains', implode(",", $domains));
+		$this->config->setUserValue($userId, 'core', 'domains', implode(",", $domains));
 
 		return new RedirectResponse(
 			$this->urlGenerator->linkToRouteAbsolute(

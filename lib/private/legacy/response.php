@@ -272,7 +272,7 @@ class OC_Response {
 	 * This function adds the CORS headers if the requester domain is white-listed
 	 */
 	public static function setCorsHeaders($userId, $domain) {
-		$allowedDomains = explode(",", \OC::$server->getConfig()->getUserValue($userId, 'cors', 'domains'));
+		$allowedDomains = explode(",", \OC::$server->getConfig()->getUserValue($userId, 'core', 'domains'));
 		if (in_array($domain, $allowedDomains)) {
 			header("Access-Control-Allow-Origin: " . $domain);
 			header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Access-Control-Allow-Origin");

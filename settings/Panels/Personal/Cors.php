@@ -58,7 +58,7 @@ class Cors implements ISettings {
 	 */
 	public function getPanel() {
 		$userId = $this->userSession->getUser()->getUID();
-		$domainsSet = $this->config->getUserValue($userId, 'cors', 'domains');
+		$domainsSet = $this->config->getUserValue($userId, 'core', 'domains');
 		if ($domainsSet == '') {
 			// 0 passes the is_empty() check
 			$domains = 0;

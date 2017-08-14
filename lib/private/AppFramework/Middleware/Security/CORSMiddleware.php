@@ -121,21 +121,6 @@ class CORSMiddleware extends Middleware {
 			$requesterDomain = $this->request->server['HTTP_ORIGIN'];
 			$userId = $this->request->server['PHP_AUTH_USER'];
 			\OC_Response::setCorsHeaders($userId, $requesterDomain);
-			return $response;
-
-			// allow credentials headers must not be true or CSRF is possible
-			// otherwise
-			foreach($response->getHeaders() as $header => $value) {
-				if(strtolower($header) === 'access-control-allow-credentials' &&
-				   strtolower(trim($value)) === 'true') {
-					$msg = 'Access-Control-Allow-Credentials must not be '.
-						   'set to true in order to prevent CSRF';
-					throw new SecurityException($msg);
-				}
-			}
-
-			$origin = $this->request->server['HTTP_ORIGIN'];
-			$response->addHeader('Access-Control-Allow-Origin', $origin);
 		}
 		return $response;
 	}
