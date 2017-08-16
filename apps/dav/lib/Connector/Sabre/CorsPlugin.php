@@ -59,8 +59,8 @@ class CorsPlugin extends \Sabre\DAV\ServerPlugin {
 	 * @return void
 	 */
 	public function setCorsHeaders() {
-		if (\OC::$server->getRequest()->server['HTTP_ORIGIN'] &&
-			\OC::$server->getRequest()->server['PHP_AUTH_USER']) {
+		if (isset(\OC::$server->getRequest()->server['HTTP_ORIGIN']) &&
+			isset(\OC::$server->getRequest()->server['PHP_AUTH_USER'])) {
 			$requesterDomain = \OC::$server->getRequest()->server['HTTP_ORIGIN'];
 	 		$userId = \OC::$server->getRequest()->server['PHP_AUTH_USER'];
 	 		\OC_Response::setCorsHeaders($userId, $requesterDomain);
