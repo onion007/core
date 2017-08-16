@@ -75,7 +75,7 @@ class Apps implements IRepairStep {
 	 */
 	private function isCoreUpdate() {
 		$installedVersion = $this->config->getSystemValue('version', '0.0.0');
-		$currentVersion = implode('.', \OCP\Util::getVersion());
+		$currentVersion = implode('.', Util::getVersion());
 		$versionDiff = version_compare($currentVersion, $installedVersion);
 		if ($versionDiff > 0) {
 			return true;
@@ -90,10 +90,11 @@ class Apps implements IRepairStep {
 	private function requiresMarketEnable() {
 		$installedVersion = $this->config->getSystemValue('version', '0.0.0');
 		$versionDiff = version_compare('10.0.0', $installedVersion);
-		if ($versionDiff >= 0) {
-			return true;
+		if ($versionDiff < 0) {
+			return false;
 		}
-		return false;
+		return true;
+
 	}
 
 	/**
@@ -108,8 +109,9 @@ class Apps implements IRepairStep {
 		$failedIncompatibleApps = $appsToUpgrade[self::KEY_INCOMPATIBLE];
 		$hasNotUpdatedCompatibleApps = 0;
 		$requiresMarketEnable = $this->requiresMarketEnable();
+		$appStoreEnabled = $this->isAppStoreEnabled();
 
-		if($isCoreUpdate && $requiresMarketEnable) {
+		if($isCoreUpdate && $requiresMarketEnable && $appStoreEnabled) {
 			// Then we need to enable the market app to support app updates / downloads during upgrade
 			$output->info('Enabling market app to assist with update');
 			// delete old value that might influence old APIs
@@ -120,7 +122,7 @@ class Apps implements IRepairStep {
 		}
 
 		// Check if we can use the marketplace to update apps as needed?
-		if($this->appManager->isEnabledForUser('market')) {
+		if($appStoreEnabled && $this->appManager->isEnabledForUser('market')) {
 			// Use market to fix missing / old apps
 			$this->loadApp('market');
 			$output->info('Using market to update existing apps');
@@ -190,6 +192,7 @@ class Apps implements IRepairStep {
 	 *
 	 * @param IOutput $output
 	 * @param string[] $appList
+	 * @param string $event
 	 * @return array
 	 * @throws AppManagerException
 	 */
@@ -273,5 +276,17 @@ class Apps implements IRepairStep {
 	 */
 	protected function loadApp($app) {
 		OC_App::loadApp($app, false);
+	}
+
+	/**
+	 * @return bool
+	 */
+	private function isAppStoreEnabled() {
+		// if appstoreenabled was explicitly disabled we shall not use the market app for upgrade
+		$appStoreEnabled = $this->config->getSystemValue('appstoreenabled', null);
+		if ($appStoreEnabled === false) {
+			return false;
+		}
+		return true;
 	}
 }
