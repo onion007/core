@@ -116,6 +116,7 @@ class CORSMiddleware extends Middleware {
 		// only react if its a CORS request and if the request sends origin and
 
 		if(isset($this->request->server['HTTP_ORIGIN']) &&
+		    isset($this->request->server['PHP_AUTH_USER']) &&
 			$this->reflector->hasAnnotation('CORS')) {
 
 			$requesterDomain = $this->request->server['HTTP_ORIGIN'];
