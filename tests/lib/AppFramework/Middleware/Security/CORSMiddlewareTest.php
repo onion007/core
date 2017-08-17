@@ -18,8 +18,14 @@ use OC\AppFramework\Utility\ControllerMethodReflector;
 use OC\AppFramework\Middleware\Security\Exceptions\SecurityException;
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\AppFramework\Http\Response;
+use OC\Settings\Controller\CorsController;
 
 
+/**
+ * Class CORSMiddlewareTest
+ *
+ * @group DB
+ */
 class CORSMiddlewareTest extends \Test\TestCase {
 
 	private $reflector;
@@ -27,7 +33,10 @@ class CORSMiddlewareTest extends \Test\TestCase {
 
 	protected function setUp() {
 		parent::setUp();
+
+		$this->config = \OC::$server->getConfig();
 		$this->reflector = new ControllerMethodReflector();
+
 		$this->session = $this->getMockBuilder('\OC\User\Session')
 			->disableOriginalConstructor()
 			->getMock();
@@ -40,18 +49,32 @@ class CORSMiddlewareTest extends \Test\TestCase {
 		$request = new Request(
 			[
 				'server' => [
-					'HTTP_ORIGIN' => 'test'
+					'HTTP_ORIGIN' => 'http://www.test.com',
+					'PHP_AUTH_USER' => 'user'
 				]
 			],
 			$this->createMock('\OCP\Security\ISecureRandom'),
-			$this->createMock('\OCP\IConfig')
+			$this->config
 		);
+		$corsController = new CorsController(
+			'core', $request, 'user',
+			$this->createMock('OCP\ILogger'),
+			$this->createMock('OCP\IURLGenerator'),
+			$this->config
+		);
+
+		// White-list http://www.test.com first
+		$corsController->addDomain('http://www.test.com');
+
 		$this->reflector->reflect($this, __FUNCTION__);
 		$middleware = new CORSMiddleware($request, $this->reflector, $this->session);
 
 		$response = $middleware->afterController($this, __FUNCTION__, new Response());
 		$headers = $response->getHeaders();
-		$this->assertEquals('test', $headers['Access-Control-Allow-Origin']);
+		$this->assertEquals('http://www.test.com', $headers['Access-Control-Allow-Origin']);
+
+		// Don't forget to remove http://www.test.com from white-list
+		$corsController->removeDomain(0);
 	}
 
 
@@ -99,7 +122,8 @@ class CORSMiddlewareTest extends \Test\TestCase {
 		$request = new Request(
 			[
 				'server' => [
-					'HTTP_ORIGIN' => 'test'
+					'HTTP_ORIGIN' => 'http://www.test.com',
+					'PHP_AUTH_USER' => 'user'
 				]
 			],
 			$this->createMock('\OCP\Security\ISecureRandom'),

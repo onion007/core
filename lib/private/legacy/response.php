@@ -271,13 +271,20 @@ class OC_Response {
 	/**
 	 * This function adds the CORS headers if the requester domain is white-listed
 	 */
-	public static function setCorsHeaders($userId, $domain) {
+	public static function setCorsHeaders($userId, $domain, $response = null) {
 		$allowedDomains = explode(",", \OC::$server->getConfig()->getUserValue($userId, 'core', 'domains'));
 		if (in_array($domain, $allowedDomains)) {
-			header("Access-Control-Allow-Origin: " . $domain);
-			header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Access-Control-Allow-Origin");
-			header("Access-Control-Allow-Methods: GET, OPTIONS, POST, PUT, DELETE, MKCOL, PROPFIND");
+			if ($response != null) {
+				$response->addHeader("Access-Control-Allow-Origin", $domain);
+				$response->addHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Access-Control-Allow-Origin");
+				$response->addHeader("Access-Control-Allow-Methods", "GET, OPTIONS, POST, PUT, DELETE, MKCOL, PROPFIND");
+			} else {
+				header("Access-Control-Allow-Origin: " . $domain);
+				header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Access-Control-Allow-Origin");
+				header("Access-Control-Allow-Methods: GET, OPTIONS, POST, PUT, DELETE, MKCOL, PROPFIND");
+			}
 		}
+		return $response;
 	}
 
 	/**
