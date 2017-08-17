@@ -62,8 +62,8 @@ class CorsPlugin extends \Sabre\DAV\ServerPlugin {
 		if (isset(\OC::$server->getRequest()->server['HTTP_ORIGIN']) &&
 			isset(\OC::$server->getRequest()->server['PHP_AUTH_USER'])) {
 			$requesterDomain = \OC::$server->getRequest()->server['HTTP_ORIGIN'];
-	 		$userId = \OC::$server->getRequest()->server['PHP_AUTH_USER'];
-	 		\OC_Response::setCorsHeaders($userId, $requesterDomain);
+			$userId = \OC::$server->getRequest()->server['PHP_AUTH_USER'];
+			\OC_Response::setCorsHeaders($userId, $requesterDomain);
 		}
 	}
 
@@ -77,8 +77,12 @@ class CorsPlugin extends \Sabre\DAV\ServerPlugin {
 	 */
 	public function setOptionsRequestHeaders(RequestInterface $request, ResponseInterface $response) {
 		\OC_Response::setOptionsRequestHeaders();
+
 		$response->setStatus(200);
 
-		return false;
+		if (!isset(\OC::$server->getRequest()->server['PHP_AUTH_USER'])) {
+			// Non-authenticated request
+			return false;
+		}
 	}
 }
