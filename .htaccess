@@ -28,7 +28,7 @@
   <FilesMatch "\.(css|js)$">
     Header set Cache-Control "max-age=15778463"
   </FilesMatch>
-  
+
   # Let browsers cache WOFF files for a week
   <FilesMatch "\.woff$">
     Header set Cache-Control "max-age=604800"
@@ -84,8 +84,3 @@ Options -Indexes
 <IfModule pagespeed_module>
   ModPagespeed Off
 </IfModule>
-
-#### DO NOT CHANGE ANYTHING ABOVE THIS LINE ####
-
-ErrorDocument 403 /core/templates/403.php
-ErrorDocument 404 /core/templates/404.php
