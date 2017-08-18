@@ -16,6 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
 
+script('settings', 'panels/cors');
+
 ?>
 
 <div class="section" id="cors">
@@ -38,10 +40,7 @@
                 <tr>
                     <td><?php p($domain); ?></td>
                     <td>
-                        <form id="form-inline" class="delete" data-confirm="<?php p($l->t('Are you sure you want to remove this domain?')); ?>" action="<?php p($_['urlGenerator']->linkToRoute('settings.Cors.removeDomain', ['id' => $id])); ?>" method="post">
-                            <input type="hidden" name="requesttoken" value="<?php p($_['requesttoken']) ?>" />
-                            <input type="submit" class="button icon-delete" value="">
-                        </form>
+                        <input data-id="<?php echo $id; ?>" type="button" class="button icon-delete removeDomainButton" data-confirm="<?php p($l->t('Are you sure you want to remove this domain?')); ?>" value="">
                     </td>
                 </tr>
             <?php } ?>

@@ -27,6 +27,9 @@ use OCP\IURLGenerator;
 use OCP\IUserSession;
 use OCP\IConfig;
 
+/**
+ * This controller is responsible for managing white-listed domains for CORS
+ */
 class CorsController extends Controller {
 
 	/** @var ILogger */
@@ -42,10 +45,11 @@ class CorsController extends Controller {
 	private $config;
 
 	/**
-	 * SettingsController constructor.
+	 * CorsController constructor.
 	 *
 	 * @param string $AppName The app's name.
 	 * @param IRequest $request The request.
+	 * @param string $userId Logged in user's username
 	 * @param ILogger $logger The logger.
 	 * @param IURLGenerator $urlGenerator Use for url generation
 	 * @param IConfig $config
@@ -137,6 +141,11 @@ class CorsController extends Controller {
 			) . '#cors');
 	}
 
+	/**
+	 * Checks whether a URL is valid
+	 * @param  string  $Url URL to check
+	 * @return boolean      whether URL is valid
+	 */
 	private static function isValidUrl($Url) {
 		if (strpos($Url, 'http://localhost:*') === 0) {
 			$Url = 'http://localhost' . substr($Url, 18);

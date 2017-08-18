@@ -66,7 +66,7 @@ $application->registerRoutes($this, [
 		['name' => 'Users#changeMail', 'url' => '/settings/mailaddress/change/{token}/{userId}', 'verb' => 'GET'],
 		['name' => 'Cors#getDomains', 'url' => '/settings/domains', 'verb' => 'GET'],
 		['name' => 'Cors#addDomain', 'url' => '/settings/domains', 'verb' => 'POST'],
-		['name' => 'Cors#removeDomain', 'url' => '/settings/domains/{id}/delete', 'verb' => 'POST']
+		['name' => 'Cors#removeDomain', 'url' => '/settings/domains/{id}', 'verb' => 'DELETE']
 	]
 ]);
 
